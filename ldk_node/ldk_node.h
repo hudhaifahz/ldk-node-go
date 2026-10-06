@@ -605,6 +605,11 @@ void uniffi_ldk_node_fn_method_bolt11payment_send_probes_using_amount(void* ptr,
 RustBuffer uniffi_ldk_node_fn_method_bolt11payment_send_using_amount(void* ptr, void* invoice, uint64_t amount_msat, RustBuffer route_parameters, RustCallStatus *out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_WITH_FIRST_HOP
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_WITH_FIRST_HOP
+RustBuffer uniffi_ldk_node_fn_method_bolt11payment_send_with_first_hop(void* ptr, void* invoice, RustBuffer first_hop_user_channel_id, RustBuffer route_parameters, RustCallStatus *out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_CLONE_BOLT12INVOICE
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_CLONE_BOLT12INVOICE
 void* uniffi_ldk_node_fn_clone_bolt12invoice(void* ptr, RustCallStatus *out_status
@@ -2040,6 +2045,12 @@ uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send_probes_using_amount(
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_USING_AMOUNT
 uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send_using_amount(void
     
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_WITH_FIRST_HOP
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_WITH_FIRST_HOP
+uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send_with_first_hop(void
+
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT12INVOICE_ABSOLUTE_EXPIRY_SECONDS

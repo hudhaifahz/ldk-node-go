@@ -666,6 +666,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
+			return C.uniffi_ldk_node_checksum_method_bolt11payment_send_with_first_hop()
+		})
+		if checksum != 21987 {
+			// If this happens try cleaning and rebuilding your project
+			panic("ldk_node: uniffi_ldk_node_checksum_method_bolt11payment_send_with_first_hop: UniFFI API checksum mismatch")
+		}
+	}
+	{
+		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
 			return C.uniffi_ldk_node_checksum_method_bolt12invoice_absolute_expiry_seconds()
 		})
 		if checksum != 28589 {
@@ -2604,6 +2613,7 @@ type Bolt11PaymentInterface interface {
 	SendProbes(invoice *Bolt11Invoice, routeParameters *RouteParametersConfig) error
 	SendProbesUsingAmount(invoice *Bolt11Invoice, amountMsat uint64, routeParameters *RouteParametersConfig) error
 	SendUsingAmount(invoice *Bolt11Invoice, amountMsat uint64, routeParameters *RouteParametersConfig) (PaymentId, error)
+	SendWithFirstHop(invoice *Bolt11Invoice, firstHopUserChannelId UserChannelId, routeParameters *RouteParametersConfig) (PaymentId, error)
 }
 type Bolt11Payment struct {
 	ffiObject FfiObject
@@ -2827,6 +2837,23 @@ func (_self *Bolt11Payment) SendUsingAmount(invoice *Bolt11Invoice, amountMsat u
 		return GoRustBuffer{
 			inner: C.uniffi_ldk_node_fn_method_bolt11payment_send_using_amount(
 				_pointer, FfiConverterBolt11InvoiceINSTANCE.Lower(invoice), FfiConverterUint64INSTANCE.Lower(amountMsat), FfiConverterOptionalRouteParametersConfigINSTANCE.Lower(routeParameters), _uniffiStatus),
+		}
+	})
+	if _uniffiErr != nil {
+		var _uniffiDefaultValue PaymentId
+		return _uniffiDefaultValue, _uniffiErr
+	} else {
+		return FfiConverterTypePaymentIdINSTANCE.Lift(_uniffiRV), nil
+	}
+}
+
+func (_self *Bolt11Payment) SendWithFirstHop(invoice *Bolt11Invoice, firstHopUserChannelId UserChannelId, routeParameters *RouteParametersConfig) (PaymentId, error) {
+	_pointer := _self.ffiObject.incrementPointer("*Bolt11Payment")
+	defer _self.ffiObject.decrementPointer()
+	_uniffiRV, _uniffiErr := rustCallWithError[NodeError](FfiConverterNodeError{}, func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return GoRustBuffer{
+			inner: C.uniffi_ldk_node_fn_method_bolt11payment_send_with_first_hop(
+				_pointer, FfiConverterBolt11InvoiceINSTANCE.Lower(invoice), FfiConverterTypeUserChannelIdINSTANCE.Lower(firstHopUserChannelId), FfiConverterOptionalRouteParametersConfigINSTANCE.Lower(routeParameters), _uniffiStatus),
 		}
 	})
 	if _uniffiErr != nil {
@@ -7313,6 +7340,46 @@ func (_ FfiDestroyerPeerDetails) Destroy(value PeerDetails) {
 	value.Destroy()
 }
 
+type ReceivingChannel struct {
+	ChannelId     ChannelId
+	UserChannelId *UserChannelId
+}
+
+func (r *ReceivingChannel) Destroy() {
+	FfiDestroyerTypeChannelId{}.Destroy(r.ChannelId)
+	FfiDestroyerOptionalTypeUserChannelId{}.Destroy(r.UserChannelId)
+}
+
+type FfiConverterReceivingChannel struct{}
+
+var FfiConverterReceivingChannelINSTANCE = FfiConverterReceivingChannel{}
+
+func (c FfiConverterReceivingChannel) Lift(rb RustBufferI) ReceivingChannel {
+	return LiftFromRustBuffer[ReceivingChannel](c, rb)
+}
+
+func (c FfiConverterReceivingChannel) Read(reader io.Reader) ReceivingChannel {
+	return ReceivingChannel{
+		FfiConverterTypeChannelIdINSTANCE.Read(reader),
+		FfiConverterOptionalTypeUserChannelIdINSTANCE.Read(reader),
+	}
+}
+
+func (c FfiConverterReceivingChannel) Lower(value ReceivingChannel) C.RustBuffer {
+	return LowerIntoRustBuffer[ReceivingChannel](c, value)
+}
+
+func (c FfiConverterReceivingChannel) Write(writer io.Writer, value ReceivingChannel) {
+	FfiConverterTypeChannelIdINSTANCE.Write(writer, value.ChannelId)
+	FfiConverterOptionalTypeUserChannelIdINSTANCE.Write(writer, value.UserChannelId)
+}
+
+type FfiDestroyerReceivingChannel struct{}
+
+func (_ FfiDestroyerReceivingChannel) Destroy(value ReceivingChannel) {
+	value.Destroy()
+}
+
 type RouteHintHop struct {
 	SrcNodeId       PublicKey
 	ShortChannelId  uint64
@@ -8483,6 +8550,7 @@ type EventPaymentClaimable struct {
 	ClaimableAmountMsat uint64
 	ClaimDeadline       *uint32
 	CustomRecords       []CustomTlvRecord
+	ReceivingChannels   []ReceivingChannel
 }
 
 func (e EventPaymentClaimable) Destroy() {
@@ -8491,6 +8559,7 @@ func (e EventPaymentClaimable) Destroy() {
 	FfiDestroyerUint64{}.Destroy(e.ClaimableAmountMsat)
 	FfiDestroyerOptionalUint32{}.Destroy(e.ClaimDeadline)
 	FfiDestroyerSequenceCustomTlvRecord{}.Destroy(e.CustomRecords)
+	FfiDestroyerSequenceReceivingChannel{}.Destroy(e.ReceivingChannels)
 }
 
 type EventPaymentForwarded struct {
@@ -8632,6 +8701,7 @@ func (FfiConverterEvent) Read(reader io.Reader) Event {
 			FfiConverterUint64INSTANCE.Read(reader),
 			FfiConverterOptionalUint32INSTANCE.Read(reader),
 			FfiConverterSequenceCustomTlvRecordINSTANCE.Read(reader),
+			FfiConverterSequenceReceivingChannelINSTANCE.Read(reader),
 		}
 	case 5:
 		return EventPaymentForwarded{
@@ -8713,6 +8783,7 @@ func (FfiConverterEvent) Write(writer io.Writer, value Event) {
 		FfiConverterUint64INSTANCE.Write(writer, variant_value.ClaimableAmountMsat)
 		FfiConverterOptionalUint32INSTANCE.Write(writer, variant_value.ClaimDeadline)
 		FfiConverterSequenceCustomTlvRecordINSTANCE.Write(writer, variant_value.CustomRecords)
+		FfiConverterSequenceReceivingChannelINSTANCE.Write(writer, variant_value.ReceivingChannels)
 	case EventPaymentForwarded:
 		writeInt32(writer, 5)
 		FfiConverterTypeChannelIdINSTANCE.Write(writer, variant_value.PrevChannelId)
@@ -13593,6 +13664,49 @@ type FfiDestroyerSequencePeerDetails struct{}
 func (FfiDestroyerSequencePeerDetails) Destroy(sequence []PeerDetails) {
 	for _, value := range sequence {
 		FfiDestroyerPeerDetails{}.Destroy(value)
+	}
+}
+
+type FfiConverterSequenceReceivingChannel struct{}
+
+var FfiConverterSequenceReceivingChannelINSTANCE = FfiConverterSequenceReceivingChannel{}
+
+func (c FfiConverterSequenceReceivingChannel) Lift(rb RustBufferI) []ReceivingChannel {
+	return LiftFromRustBuffer[[]ReceivingChannel](c, rb)
+}
+
+func (c FfiConverterSequenceReceivingChannel) Read(reader io.Reader) []ReceivingChannel {
+	length := readInt32(reader)
+	if length == 0 {
+		return nil
+	}
+	result := make([]ReceivingChannel, 0, length)
+	for i := int32(0); i < length; i++ {
+		result = append(result, FfiConverterReceivingChannelINSTANCE.Read(reader))
+	}
+	return result
+}
+
+func (c FfiConverterSequenceReceivingChannel) Lower(value []ReceivingChannel) C.RustBuffer {
+	return LowerIntoRustBuffer[[]ReceivingChannel](c, value)
+}
+
+func (c FfiConverterSequenceReceivingChannel) Write(writer io.Writer, value []ReceivingChannel) {
+	if len(value) > math.MaxInt32 {
+		panic("[]ReceivingChannel is too large to fit into Int32")
+	}
+
+	writeInt32(writer, int32(len(value)))
+	for _, item := range value {
+		FfiConverterReceivingChannelINSTANCE.Write(writer, item)
+	}
+}
+
+type FfiDestroyerSequenceReceivingChannel struct{}
+
+func (FfiDestroyerSequenceReceivingChannel) Destroy(sequence []ReceivingChannel) {
+	for _, value := range sequence {
+		FfiDestroyerReceivingChannel{}.Destroy(value)
 	}
 }
 
