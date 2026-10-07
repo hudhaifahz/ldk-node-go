@@ -535,6 +535,11 @@ void uniffi_ldk_node_fn_method_bolt11payment_claim_for_hash(void* ptr, RustBuffe
 void uniffi_ldk_node_fn_method_bolt11payment_fail_for_hash(void* ptr, RustBuffer payment_hash, RustCallStatus *out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_QUOTE_CIRCULAR_ROUTE
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_QUOTE_CIRCULAR_ROUTE
+RustBuffer uniffi_ldk_node_fn_method_bolt11payment_quote_circular_route(void* ptr, uint64_t amount_msat, RustBuffer first_hop_user_channel_id, RustBuffer last_hop_user_channel_id, RustBuffer route_parameters, RustCallStatus *out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_RECEIVE
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_RECEIVE
 void* uniffi_ldk_node_fn_method_bolt11payment_receive(void* ptr, uint64_t amount_msat, RustBuffer description, uint32_t expiry_secs, RustCallStatus *out_status
@@ -1961,6 +1966,12 @@ uint16_t uniffi_ldk_node_checksum_method_bolt11payment_claim_for_hash(void
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_FAIL_FOR_HASH
 uint16_t uniffi_ldk_node_checksum_method_bolt11payment_fail_for_hash(void
     
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_QUOTE_CIRCULAR_ROUTE
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_QUOTE_CIRCULAR_ROUTE
+uint16_t uniffi_ldk_node_checksum_method_bolt11payment_quote_circular_route(void
+
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_RECEIVE
