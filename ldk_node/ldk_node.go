@@ -7466,14 +7466,17 @@ func (_ FfiDestroyerOutPoint) Destroy(value OutPoint) {
 }
 
 type PaymentDetails struct {
-	Id                    PaymentId
-	Kind                  PaymentKind
-	AmountMsat            *uint64
-	FeePaidMsat           *uint64
-	Direction             PaymentDirection
-	Status                PaymentStatus
-	CreatedAt             uint64
-	LatestUpdateTimestamp uint64
+	Id                                        PaymentId
+	Kind                                      PaymentKind
+	AmountMsat                                *uint64
+	FeePaidMsat                               *uint64
+	Direction                                 PaymentDirection
+	Status                                    PaymentStatus
+	CreatedAt                                 uint64
+	LatestUpdateTimestamp                     uint64
+	CircularFailureReason                     *CircularPaymentFailureReason
+	CircularObservedReceivingChannelIds       []UserChannelId
+	CircularUnidentifiedReceivingChannelCount uint32
 }
 
 func (r *PaymentDetails) Destroy() {
@@ -7485,6 +7488,9 @@ func (r *PaymentDetails) Destroy() {
 	FfiDestroyerPaymentStatus{}.Destroy(r.Status)
 	FfiDestroyerUint64{}.Destroy(r.CreatedAt)
 	FfiDestroyerUint64{}.Destroy(r.LatestUpdateTimestamp)
+	FfiDestroyerOptionalCircularPaymentFailureReason{}.Destroy(r.CircularFailureReason)
+	FfiDestroyerSequenceTypeUserChannelId{}.Destroy(r.CircularObservedReceivingChannelIds)
+	FfiDestroyerUint32{}.Destroy(r.CircularUnidentifiedReceivingChannelCount)
 }
 
 type FfiConverterPaymentDetails struct{}
@@ -7505,6 +7511,9 @@ func (c FfiConverterPaymentDetails) Read(reader io.Reader) PaymentDetails {
 		FfiConverterPaymentStatusINSTANCE.Read(reader),
 		FfiConverterUint64INSTANCE.Read(reader),
 		FfiConverterUint64INSTANCE.Read(reader),
+		FfiConverterOptionalCircularPaymentFailureReasonINSTANCE.Read(reader),
+		FfiConverterSequenceTypeUserChannelIdINSTANCE.Read(reader),
+		FfiConverterUint32INSTANCE.Read(reader),
 	}
 }
 
@@ -7521,6 +7530,9 @@ func (c FfiConverterPaymentDetails) Write(writer io.Writer, value PaymentDetails
 	FfiConverterPaymentStatusINSTANCE.Write(writer, value.Status)
 	FfiConverterUint64INSTANCE.Write(writer, value.CreatedAt)
 	FfiConverterUint64INSTANCE.Write(writer, value.LatestUpdateTimestamp)
+	FfiConverterOptionalCircularPaymentFailureReasonINSTANCE.Write(writer, value.CircularFailureReason)
+	FfiConverterSequenceTypeUserChannelIdINSTANCE.Write(writer, value.CircularObservedReceivingChannelIds)
+	FfiConverterUint32INSTANCE.Write(writer, value.CircularUnidentifiedReceivingChannelCount)
 }
 
 type FfiDestroyerPaymentDetails struct{}
@@ -8485,6 +8497,42 @@ func (_ FfiDestroyerBuildError) Destroy(value *BuildError) {
 		_ = variantValue
 		panic(fmt.Sprintf("invalid error value `%v` in FfiDestroyerBuildError.Destroy", value))
 	}
+}
+
+type CircularPaymentFailureReason uint
+
+const (
+	CircularPaymentFailureReasonPaymentNotPending               CircularPaymentFailureReason = 1
+	CircularPaymentFailureReasonCircularMetadataMismatch        CircularPaymentFailureReason = 2
+	CircularPaymentFailureReasonAmountMismatch                  CircularPaymentFailureReason = 3
+	CircularPaymentFailureReasonMissingPreimage                 CircularPaymentFailureReason = 4
+	CircularPaymentFailureReasonMissingReceivingChannelIdentity CircularPaymentFailureReason = 5
+	CircularPaymentFailureReasonReceivingChannelMismatch        CircularPaymentFailureReason = 6
+)
+
+type FfiConverterCircularPaymentFailureReason struct{}
+
+var FfiConverterCircularPaymentFailureReasonINSTANCE = FfiConverterCircularPaymentFailureReason{}
+
+func (c FfiConverterCircularPaymentFailureReason) Lift(rb RustBufferI) CircularPaymentFailureReason {
+	return LiftFromRustBuffer[CircularPaymentFailureReason](c, rb)
+}
+
+func (c FfiConverterCircularPaymentFailureReason) Lower(value CircularPaymentFailureReason) C.RustBuffer {
+	return LowerIntoRustBuffer[CircularPaymentFailureReason](c, value)
+}
+func (FfiConverterCircularPaymentFailureReason) Read(reader io.Reader) CircularPaymentFailureReason {
+	id := readInt32(reader)
+	return CircularPaymentFailureReason(id)
+}
+
+func (FfiConverterCircularPaymentFailureReason) Write(writer io.Writer, value CircularPaymentFailureReason) {
+	writeInt32(writer, int32(value))
+}
+
+type FfiDestroyerCircularPaymentFailureReason struct{}
+
+func (_ FfiDestroyerCircularPaymentFailureReason) Destroy(value CircularPaymentFailureReason) {
 }
 
 type ClosureReason interface {
@@ -12832,6 +12880,43 @@ func (_ FfiDestroyerOptionalAsyncPaymentsRole) Destroy(value *AsyncPaymentsRole)
 	}
 }
 
+type FfiConverterOptionalCircularPaymentFailureReason struct{}
+
+var FfiConverterOptionalCircularPaymentFailureReasonINSTANCE = FfiConverterOptionalCircularPaymentFailureReason{}
+
+func (c FfiConverterOptionalCircularPaymentFailureReason) Lift(rb RustBufferI) *CircularPaymentFailureReason {
+	return LiftFromRustBuffer[*CircularPaymentFailureReason](c, rb)
+}
+
+func (_ FfiConverterOptionalCircularPaymentFailureReason) Read(reader io.Reader) *CircularPaymentFailureReason {
+	if readInt8(reader) == 0 {
+		return nil
+	}
+	temp := FfiConverterCircularPaymentFailureReasonINSTANCE.Read(reader)
+	return &temp
+}
+
+func (c FfiConverterOptionalCircularPaymentFailureReason) Lower(value *CircularPaymentFailureReason) C.RustBuffer {
+	return LowerIntoRustBuffer[*CircularPaymentFailureReason](c, value)
+}
+
+func (_ FfiConverterOptionalCircularPaymentFailureReason) Write(writer io.Writer, value *CircularPaymentFailureReason) {
+	if value == nil {
+		writeInt8(writer, 0)
+	} else {
+		writeInt8(writer, 1)
+		FfiConverterCircularPaymentFailureReasonINSTANCE.Write(writer, *value)
+	}
+}
+
+type FfiDestroyerOptionalCircularPaymentFailureReason struct{}
+
+func (_ FfiDestroyerOptionalCircularPaymentFailureReason) Destroy(value *CircularPaymentFailureReason) {
+	if value != nil {
+		FfiDestroyerCircularPaymentFailureReason{}.Destroy(*value)
+	}
+}
+
 type FfiConverterOptionalClosureReason struct{}
 
 var FfiConverterOptionalClosureReasonINSTANCE = FfiConverterOptionalClosureReason{}
@@ -14595,6 +14680,49 @@ type FfiDestroyerSequenceTypeSocketAddress struct{}
 func (FfiDestroyerSequenceTypeSocketAddress) Destroy(sequence []SocketAddress) {
 	for _, value := range sequence {
 		FfiDestroyerTypeSocketAddress{}.Destroy(value)
+	}
+}
+
+type FfiConverterSequenceTypeUserChannelId struct{}
+
+var FfiConverterSequenceTypeUserChannelIdINSTANCE = FfiConverterSequenceTypeUserChannelId{}
+
+func (c FfiConverterSequenceTypeUserChannelId) Lift(rb RustBufferI) []UserChannelId {
+	return LiftFromRustBuffer[[]UserChannelId](c, rb)
+}
+
+func (c FfiConverterSequenceTypeUserChannelId) Read(reader io.Reader) []UserChannelId {
+	length := readInt32(reader)
+	if length == 0 {
+		return nil
+	}
+	result := make([]UserChannelId, 0, length)
+	for i := int32(0); i < length; i++ {
+		result = append(result, FfiConverterTypeUserChannelIdINSTANCE.Read(reader))
+	}
+	return result
+}
+
+func (c FfiConverterSequenceTypeUserChannelId) Lower(value []UserChannelId) C.RustBuffer {
+	return LowerIntoRustBuffer[[]UserChannelId](c, value)
+}
+
+func (c FfiConverterSequenceTypeUserChannelId) Write(writer io.Writer, value []UserChannelId) {
+	if len(value) > math.MaxInt32 {
+		panic("[]UserChannelId is too large to fit into Int32")
+	}
+
+	writeInt32(writer, int32(len(value)))
+	for _, item := range value {
+		FfiConverterTypeUserChannelIdINSTANCE.Write(writer, item)
+	}
+}
+
+type FfiDestroyerSequenceTypeUserChannelId struct{}
+
+func (FfiDestroyerSequenceTypeUserChannelId) Destroy(sequence []UserChannelId) {
+	for _, value := range sequence {
+		FfiDestroyerTypeUserChannelId{}.Destroy(value)
 	}
 }
 
