@@ -535,6 +535,16 @@ void uniffi_ldk_node_fn_method_bolt11payment_claim_for_hash(void* ptr, RustBuffe
 void uniffi_ldk_node_fn_method_bolt11payment_fail_for_hash(void* ptr, RustBuffer payment_hash, RustCallStatus *out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_PREPARE_CIRCULAR_PAYMENT
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_PREPARE_CIRCULAR_PAYMENT
+RustBuffer uniffi_ldk_node_fn_method_bolt11payment_prepare_circular_payment(void* ptr, uint64_t amount_msat, RustBuffer description, uint32_t expiry_secs, RustBuffer operation_id, RustBuffer first_hop_user_channel_id, RustBuffer last_hop_user_channel_id, uint64_t max_routing_fee_msat, RustCallStatus *out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_QUOTE_CIRCULAR_ROUTE
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_QUOTE_CIRCULAR_ROUTE
+RustBuffer uniffi_ldk_node_fn_method_bolt11payment_quote_circular_route(void* ptr, uint64_t amount_msat, RustBuffer first_hop_user_channel_id, RustBuffer last_hop_user_channel_id, RustBuffer route_parameters, RustCallStatus *out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_RECEIVE
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_RECEIVE
 void* uniffi_ldk_node_fn_method_bolt11payment_receive(void* ptr, uint64_t amount_msat, RustBuffer description, uint32_t expiry_secs, RustCallStatus *out_status
@@ -590,6 +600,11 @@ void* uniffi_ldk_node_fn_method_bolt11payment_receive_via_jit_channel_for_hash(v
 RustBuffer uniffi_ldk_node_fn_method_bolt11payment_send(void* ptr, void* invoice, RustBuffer route_parameters, RustCallStatus *out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_PREPARED_CIRCULAR_PAYMENT
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_PREPARED_CIRCULAR_PAYMENT
+RustBuffer uniffi_ldk_node_fn_method_bolt11payment_send_prepared_circular_payment(void* ptr, RustBuffer operation_id, RustBuffer quote, RustCallStatus *out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_PROBES
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_PROBES
 void uniffi_ldk_node_fn_method_bolt11payment_send_probes(void* ptr, void* invoice, RustBuffer route_parameters, RustCallStatus *out_status
@@ -603,6 +618,11 @@ void uniffi_ldk_node_fn_method_bolt11payment_send_probes_using_amount(void* ptr,
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_USING_AMOUNT
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_USING_AMOUNT
 RustBuffer uniffi_ldk_node_fn_method_bolt11payment_send_using_amount(void* ptr, void* invoice, uint64_t amount_msat, RustBuffer route_parameters, RustCallStatus *out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_WITH_FIRST_HOP
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_METHOD_BOLT11PAYMENT_SEND_WITH_FIRST_HOP
+RustBuffer uniffi_ldk_node_fn_method_bolt11payment_send_with_first_hop(void* ptr, void* invoice, RustBuffer first_hop_user_channel_id, RustBuffer route_parameters, RustCallStatus *out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_FN_CLONE_BOLT12INVOICE
@@ -1958,6 +1978,18 @@ uint16_t uniffi_ldk_node_checksum_method_bolt11payment_fail_for_hash(void
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_PREPARE_CIRCULAR_PAYMENT
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_PREPARE_CIRCULAR_PAYMENT
+uint16_t uniffi_ldk_node_checksum_method_bolt11payment_prepare_circular_payment(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_QUOTE_CIRCULAR_ROUTE
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_QUOTE_CIRCULAR_ROUTE
+uint16_t uniffi_ldk_node_checksum_method_bolt11payment_quote_circular_route(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_RECEIVE
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_RECEIVE
 uint16_t uniffi_ldk_node_checksum_method_bolt11payment_receive(void
@@ -2024,6 +2056,12 @@ uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send(void
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_PREPARED_CIRCULAR_PAYMENT
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_PREPARED_CIRCULAR_PAYMENT
+uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send_prepared_circular_payment(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_PROBES
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_PROBES
 uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send_probes(void
@@ -2039,6 +2077,12 @@ uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send_probes_using_amount(
 #ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_USING_AMOUNT
 #define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_USING_AMOUNT
 uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send_using_amount(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_WITH_FIRST_HOP
+#define UNIFFI_FFIDEF_UNIFFI_LDK_NODE_CHECKSUM_METHOD_BOLT11PAYMENT_SEND_WITH_FIRST_HOP
+uint16_t uniffi_ldk_node_checksum_method_bolt11payment_send_with_first_hop(void
     
 );
 #endif
